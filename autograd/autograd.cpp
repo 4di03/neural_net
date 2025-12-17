@@ -40,29 +40,29 @@ std::ostream &operator<<(std::ostream &os, const Operation &op){
  */
 std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b)
 {
-    return std::make_shared<Value>(a->data + b->data, std::vector<std::shared_ptr<Value>>{a, b}, Operation::Add);
+    return std::make_shared<Value>(a->get_data() + b->get_data(), std::vector<std::shared_ptr<Value>>{a, b}, Operation::Add);
 }
 std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b)
 {
-    return std::make_shared<Value>(a->data - b->data, std::vector<std::shared_ptr<Value>>{a, b}, Operation::Subtract);
+    return std::make_shared<Value>(a->get_data() - b->get_data(), std::vector<std::shared_ptr<Value>>{a, b}, Operation::Subtract);
 }
 std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b)
 {
-    return std::make_shared<Value>(a->data * b->data, std::vector<std::shared_ptr<Value>>{a, b}, Operation::Multiply);
+    return std::make_shared<Value>(a->get_data() * b->get_data(), std::vector<std::shared_ptr<Value>>{a, b}, Operation::Multiply);
 }
 std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b)
 {
-    if (b->data == 0)
+    if (b->get_data() == 0)
     {
         throw std::runtime_error("Division by zero");
     }
-    return std::make_shared<Value>(a->data / b->data, std::vector<std::shared_ptr<Value>>{a, b}, Operation::Divide);
+    return std::make_shared<Value>(a->get_data() / b->get_data(), std::vector<std::shared_ptr<Value>>{a, b}, Operation::Divide);
 }
 
 // cout overload for shared_ptr<Value>
 std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Value> &v)
 {
-    os << "\nValue(data=" << v->data << ", operation = " << (v->get_operation().has_value() ? to_string(v->get_operation().value()) : "nullopt") << ", prev=[";
+    os << "\nValue(data=" << v->get_data() << ", operation = " << (v->get_operation().has_value() ? to_string(v->get_operation().value()) : "nullopt") << ", prev=[";
     const auto &prev = v->get_prev();
     for (size_t i = 0; i < prev.size(); i++)
     {
@@ -78,7 +78,7 @@ std::ostream &operator<<(std::ostream &os, const std::shared_ptr<Value> &v)
  *
  * Allows use to compute derivates for general functions of from f(x), where f is any callable object
  */
-std::shared_ptr<Value> make_value(float x)
+std::shared_ptr<Value> make_value(float x, const std::optional<std::string>& label)
 {
-    return std::make_shared<Value>(x);
+    return std::make_shared<Value>(x, label);
 }

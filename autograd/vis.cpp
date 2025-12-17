@@ -23,8 +23,13 @@
  */
 std::string value_label(const std::shared_ptr<Value>& v) {
     std::ostringstream ss;
-    ss << "data=" << v->data;
 
+    if (v->get_label().has_value()) {
+        ss << v->get_label().value();
+        ss << "\\ndata=" << v->get_data();
+    } else {
+        ss << "data=" << v->get_data();
+    }
     if (v->get_operation().has_value()) {
         ss << "\\nop=" << to_string(v->get_operation().value());
     }
