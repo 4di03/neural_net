@@ -1,7 +1,7 @@
 /**
- * Custom implementation of a simple neural network, just for fun and learning.
+ * Custom implementation of automatic differentiation on scalar-valued functions, just for fun and learning.
  *
- * For autograd, we approximate deirvatives using finite differences.
+ * For autograd, we approximate derivatives using finite differences.
  */
 #include <iostream>
 #include <optional>

@@ -30,6 +30,9 @@ std::string value_label(const std::shared_ptr<Value>& v) {
     } else {
         ss << "data=" << v->get_data();
     }
+
+    ss << "\\ngrad=" << v->get_grad();
+
     if (v->get_operation().has_value()) {
         ss << "\\nop=" << to_string(v->get_operation().value());
     }

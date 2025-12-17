@@ -56,8 +56,26 @@ public:
         return op;
     }
 
+    float get_grad() const
+    {
+        return grad;
+    }
+
+    void set_grad(float new_grad)
+    {
+        grad = new_grad;
+    }
+    
 private:
     float data; // scalar value held by this Value node
+    
+    float grad = 0.0f; 
+    // this represents the gradient of some final output w.r.t this value, to be computed during backpropagation
+    // the gradient tells us how much changing this value by an infinitesimal amount would change the final output at some point
+    // in the computation graph of the final value, this value will be one of the nodes
+    // if this is 0, it means this value has not effect on the final output
+
+
     std::vector<std::shared_ptr<Value>> prev;   // if this value is the result of an operation, store the operands
     std::optional<Operation> op = std::nullopt; // the operation that produced this value, if its not an operation, this is nullopt
     std::optional<std::string> label = std::nullopt;
