@@ -5,7 +5,9 @@
  */
 #include <iostream>
 #include <optional>
+#include <span>
 #pragma once
+#include "operation.h"
 
 template <class T>
 void print(const T &x)
@@ -13,25 +15,16 @@ void print(const T &x)
     std::cout << x << '\n'; // works for anything with operator<<
 }
 
-enum class Operation
-{
-    Add,
-    Subtract,
-    Multiply,
-    Divide
-};
-std::string to_string(const Operation &op);
 
 
-std::ostream &operator<<(std::ostream &os, const Operation &op);
 
-class Value
+class Value : public std::enable_shared_from_this<Value>
 {
 public:
 
     Value(float data, const std::optional<std::string>& label) : data(data), label(label) {}
-    Value(float data, const std::vector<std::shared_ptr<Value>> &prev, std::optional<Operation> op) : data(data), prev(prev), op(op){}
-    Value(float data, const std::vector<std::shared_ptr<Value>> &prev, std::optional<Operation> op, const std::optional<std::string>& label) : data(data), prev(prev), op(op), label(label) {}
+    Value(float data, const std::vector<std::shared_ptr<Value>> &prev, const std::shared_ptr<const Operation> op) : data(data), prev(prev), op(op){}
+    Value(float data, const std::vector<std::shared_ptr<Value>> &prev, const std::shared_ptr<const Operation> op, const std::optional<std::string>& label) : data(data), prev(prev), op(op), label(label) {}
 
     float get_data() const
     {
@@ -51,7 +44,7 @@ public:
     {
         return prev;
     }
-    const std::optional<Operation> &get_operation() const
+    const std::shared_ptr<const Operation> &get_operation() const
     {
         return op;
     }
@@ -65,6 +58,15 @@ public:
     {
         grad = new_grad;
     }
+
+    void add_grad(float grad_increment)
+    {
+        this->set_grad(this->get_grad() + grad_increment);
+    }
+
+    // propagate gradients through all dependent nodes (in topological order) to compute gradients w.r.t this value for each input Value node (modifying the grad field of each Value)
+    // the gradient of this value w.r.t itself is 1.0, so a guaranteed outcome is that after calling backward on some final output Value node, that node will have grad = 1.0
+    void backward();
     
 private:
     float data; // scalar value held by this Value node
@@ -77,19 +79,12 @@ private:
 
 
     std::vector<std::shared_ptr<Value>> prev;   // if this value is the result of an operation, store the operands
-    std::optional<Operation> op = std::nullopt; // the operation that produced this value, if its not an operation, this is nullopt
+    std::shared_ptr<const Operation> op = nullptr; // the operation that produced this value, if its not an operation, this is null
     std::optional<std::string> label = std::nullopt;
 };
 
-/**
- * We  set the children to be the operands involved in the operation, so taht we can trace back during backpropagation.
- *
- * WE only define this on shared pointers to make sure we don't copy around values and miss updating dependencies in the computation graph.
- */
-std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b);
-std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b);
-std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b);
-std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &a, const std::shared_ptr<Value> &b);
+std::ostream &operator<<(std::ostream &os, const Operation &op);
+
 
 
 // cout overload for shared_ptr<Value>
