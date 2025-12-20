@@ -95,7 +95,7 @@ int main()
       auto outputs = net(inputs);
       outputs[0]->set_label("network_output");
       outputs[0]->backward();
-      //WRITE_PNG(outputs[0], "fcc_network_comp_graph.png");
+      WRITE_PNG(outputs[0], "fcc_network_comp_graph.png");
 
     }
     // compute loss over a batch and backpropagate

@@ -18,7 +18,7 @@ We don't use any libraries beyond the C++ standard library. If you'd like to vis
 make && ./main
 ```
 
-If you'd like to toy around, edit `main.cpp` to create different network architectures and inputs.
+In `main.cpp`, you'll find examples of creating differentiable expressions, backpropagating through them, creating networks, and running gradient descent to train a network to fit to a simple dataset.
 
 
 Example visualization of computation graph for a fully connected network with 3 inputs, 2 hidden layers of 4 neurons each, and 1 output:
