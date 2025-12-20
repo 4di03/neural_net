@@ -15,6 +15,7 @@
 #include <sstream>
 #include <fstream>
 #include "autograd.h"
+#include "constants.h"
 #pragma once
 
 /**
@@ -48,3 +49,14 @@ void write_png(
     const std::string& png_path,
     const std::string& dot_path = "graph.dot"
 );
+
+// write PNG only if DRAW_GRAPHS is true
+#define WRITE_PNG_WITH_DOT_PATH(out, png_path, dot_path)        \
+    do {                                         \
+        if constexpr (DRAW_GRAPHS) {              \
+            write_png(out, png_path, dot_path);   \
+        }                                        \
+    } while (0)
+
+#define WRITE_PNG(out, png_path) \
+    WRITE_PNG_WITH_DOT_PATH(out, png_path, "graph.dot")

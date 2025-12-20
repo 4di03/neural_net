@@ -1,3 +1,4 @@
 *.dot
 main
 *.dSYM/
+*after_step*

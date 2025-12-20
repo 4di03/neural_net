@@ -73,10 +73,9 @@ std::shared_ptr<Value> Neuron::operator()(network_input_t x) const
     return out;
 };
 
-// last parameter is bias
-std::vector<std::shared_ptr<const Value>> Neuron::parameters() const
+const std::vector<std::shared_ptr<Value>> Neuron::trainable_parameters() const
 {
-    std::vector<std::shared_ptr<const Value>> out;
+    std::vector<std::shared_ptr<Value>> out;
     out.reserve(weights.size() + 1);
 
     for (const auto &w : weights)
@@ -89,6 +88,17 @@ std::vector<std::shared_ptr<const Value>> Neuron::parameters() const
         out.push_back(bias);
     }
 
+    return out;
+}
+
+const std::vector<std::shared_ptr<Value>>  FullyConnectedLayer::trainable_parameters() const
+{
+    std::vector<std::shared_ptr<Value>> out;
+    for (const auto &neuron : neurons)
+    {
+        auto neuron_params = neuron.trainable_parameters();
+        out.insert(out.end(), neuron_params.begin(), neuron_params.end());
+    }
     return out;
 }
 
@@ -125,6 +135,12 @@ network_output_t FullyConnectedLayer::operator()(network_input_t x) const
     return out;
 };
 
+const std::vector<std::shared_ptr<Value>>& FullyConnectedNetwork::trainable_parameters() const
+{
+    // return reference to the cached parameers
+    return trainable_params_cache;
+}
+
 // initialize a fully connected network with layer_sizes defining the number of neurons in each layer, and num_inputs defining the number of inputs to the network
 FullyConnectedNetwork::FullyConnectedNetwork(int num_inputs, const std::vector<int> &layer_sizes)
 {
@@ -135,6 +151,13 @@ FullyConnectedNetwork::FullyConnectedNetwork(int num_inputs, const std::vector<i
         int layer_size = layer_sizes[i];
         layers.emplace_back(current_input_size, layer_size, i);
         current_input_size = layer_size;
+    }
+
+    // cache trainable parameters, TODO: if we implement/allow dynamic layers with changing sizes/nodes after instantiation, we need to update this cache
+    for (const auto &layer : layers)
+    {
+        auto layer_params = layer.trainable_parameters();
+        trainable_params_cache.insert(trainable_params_cache.end(), layer_params.begin(), layer_params.end());
     }
 }
 
@@ -155,3 +178,47 @@ network_output_t FullyConnectedNetwork::operator()(network_input_t x) const
     }
     return out;
 }
+
+
+std::vector<network_output_t> FullyConnectedNetwork::operator()(std::vector<network_input_t>& x) const
+{
+    std::vector<network_output_t> outputs;
+    outputs.reserve(x.size());
+
+    for (const auto& single_input : x)
+    {
+        auto out = (*this)(single_input);
+        outputs.push_back(out);
+    }
+
+    return outputs;
+}
+
+
+void Optimizer::step()
+{
+    for (const auto& param : parameters)
+    {
+        float current_value = param->get_data();
+        float grad = param->get_grad(); // grad w.r.t some loss
+
+        /* nudge the parameter in the direction that reduces the loss
+        * if the gradient is positive, the loss is increasing as the parameter increases. To minimize, we need to decrease the value for the parameter.
+        * if the gradient is negative, the loss is decreasing as the parameter increases. To minimize, we need to increase the value for the parameter.
+        * so we subtract learning_rate * grad from the current value, as we just move by some small amount in the direction opposite to the gradient
+        */
+        float new_value = current_value - learning_rate * grad;
+
+        param->set_data(new_value);
+    }
+}
+
+
+void Optimizer::zero_grad()
+{
+    for (const auto& param : parameters)
+    {
+        param->set_grad(0.0f);
+    }
+}
+

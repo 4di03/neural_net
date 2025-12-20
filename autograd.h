@@ -77,6 +77,11 @@ public:
         this->set_grad(this->get_grad() + grad_increment);
     }
 
+    void set_data(float new_data)
+    {
+        data = new_data;
+    }
+
     // propagate gradients through all dependent nodes (in topological order) to compute gradients w.r.t this value for each input Value node (modifying the grad field of each Value)
     // the gradient of this value w.r.t itself is 1.0, so a guaranteed outcome is that after calling backward on some final output Value node, that node will have grad = 1.0
     void backward();

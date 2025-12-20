@@ -16,6 +16,9 @@
 #include <fstream>
 #include "vis.h"
 
+
+
+
 /**
  * Helper: build a compact label for a node:
  *   data=...
@@ -106,6 +109,11 @@ void write_dot_file(const std::shared_ptr<Value>& out, const std::string& path) 
     f << to_dot(out);
     f.close();
 }
+
+
+
+
+
 /**
  * Write a PNG visualization of the computation graph.
  *
