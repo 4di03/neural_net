@@ -8,14 +8,14 @@
 
 // Implementations of Operation subclasses
 
-std::shared_ptr<Value> Add::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Add::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Add operation requires exactly two inputs");
     }
     float result = inputs[0]->get_data() + inputs[1]->get_data();
     return std::make_shared<Value>(result, std::vector<std::shared_ptr<Value>>(inputs.begin(), inputs.end()), shared_from_this());
 }
-void Add::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Add::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Add operation requires exactly two inputs");
     }
@@ -30,7 +30,7 @@ std::string Add::get_name() const {
 }
 
 
-std::shared_ptr<Value> Subtract::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Subtract::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Subtract operation requires exactly two inputs");
     }
@@ -38,7 +38,7 @@ std::shared_ptr<Value> Subtract::forward(std::span<std::shared_ptr<Value> const>
     return std::make_shared<Value>(result, std::vector<std::shared_ptr<Value>>(inputs.begin(), inputs.end()), shared_from_this());
 }
 
-void Subtract::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Subtract::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Subtract operation requires exactly two inputs");
     }
@@ -54,7 +54,7 @@ std::string Subtract::get_name() const {
 
 
 
-std::shared_ptr<Value> Multiply::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Multiply::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Multiply operation requires exactly two inputs");
     }
@@ -62,7 +62,7 @@ std::shared_ptr<Value> Multiply::forward(std::span<std::shared_ptr<Value> const>
     return std::make_shared<Value>(result, std::vector<std::shared_ptr<Value>>(inputs.begin(), inputs.end()), shared_from_this());
 }
 
-void Multiply::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Multiply::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Multiply operation requires exactly two inputs");
     }
@@ -76,7 +76,7 @@ std::string Multiply::get_name() const {
 }
 
 
-std::shared_ptr<Value> Divide::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Divide::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Divide operation requires exactly two inputs");
     }
@@ -87,7 +87,7 @@ std::shared_ptr<Value> Divide::forward(std::span<std::shared_ptr<Value> const> i
     return std::make_shared<Value>(result, std::vector<std::shared_ptr<Value>>(inputs.begin(), inputs.end()), shared_from_this());
 }
 
-void Divide::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Divide::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 2) {
         throw std::runtime_error("Divide operation requires exactly two inputs");
     }
@@ -107,7 +107,7 @@ std::string Divide::get_name() const {
 
 
 
-std::shared_ptr<Value> Exp::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Exp::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 1) {
         throw std::runtime_error("Exp operation requires exactly one input");
     }
@@ -115,7 +115,7 @@ std::shared_ptr<Value> Exp::forward(std::span<std::shared_ptr<Value> const> inpu
     return std::make_shared<Value>(result, std::vector<std::shared_ptr<Value>>(inputs.begin(), inputs.end()), shared_from_this());
 }
 
-void Exp::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Exp::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 1) {
         throw std::runtime_error("Exp operation requires exactly one input");
     }
@@ -135,7 +135,7 @@ float tanh_manual(float x) {
     return (std::exp(2.0f * x) - 1.0f) / (std::exp(2.0f * x) + 1.0f);
 }
 
-std::shared_ptr<Value> Tanh::forward(std::span<std::shared_ptr<Value> const> inputs) const {
+std::shared_ptr<Value> Tanh::forward(std::span<const std::shared_ptr<Value>> inputs) const {
     if (inputs.size() != 1) {
         throw std::runtime_error("Tanh operation requires exactly one input");
     }
@@ -144,7 +144,7 @@ std::shared_ptr<Value> Tanh::forward(std::span<std::shared_ptr<Value> const> inp
 }
 
 
-void Tanh::backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const {
+void Tanh::backward(std::span<const std::shared_ptr<Value>> inputs, std::shared_ptr<const Value> out) const {
     if (inputs.size() != 1) {
         throw std::runtime_error("Tanh operation requires exactly one input");
     }

@@ -17,7 +17,20 @@ void print(const T &x)
 
 
 
-
+/**
+* A Value represents a scalar value in the computation graph, along with its gradient and dependencies.
+*
+* Each Value may be the result of an Operation applied to other Values (its "prev" nodes).
+* The Value tracks:
+*  - data: the scalar value
+*  - grad: the gradient of some final output w.r.t this value (computed during backpropagation)
+*  - prev: the input Values that were used to compute this Value (if any)
+*  - op: the Operation that produced this Value (if any)
+*  - label: optional human-readable label for debugging/visualization
+*
+* The Value class provides methods to get/set these fields, and to perform backpropagation
+* to compute gradients w.r.t all input Values in the computation graph.
+ */
 class Value : public std::enable_shared_from_this<Value>
 {
 public:
@@ -82,6 +95,7 @@ private:
     std::shared_ptr<const Operation> op = nullptr; // the operation that produced this value, if its not an operation, this is null
     std::optional<std::string> label = std::nullopt;
 };
+
 
 std::ostream &operator<<(std::ostream &os, const Operation &op);
 

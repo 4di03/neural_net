@@ -1,5 +1,6 @@
 #include "autograd.h"
 #include "vis.h"
+#include "network.h"
 using namespace operation; 
 
 int main()
@@ -81,6 +82,21 @@ int main()
       auto f = d*e;
       f->backward();
       write_png(f, "complex_graph.png");
+    }
+
+    // make a simple fully connected network and do a forward pass
+    {
+      FullyConnectedNetwork net(3, {4,4,1}); // 3 inputs, 2 hidden layers of 4 neurons each, 1 output
+
+      network_output_t inputs;
+      inputs.push_back(make_value(1.0, "input1"));
+      inputs.push_back(make_value(0.0, "input2"));
+      inputs.push_back(make_value(-1.0, "input3"));
+      auto outputs = net(inputs);
+      outputs[0]->set_label("network_output");
+      outputs[0]->backward();
+      write_png(outputs[0], "fcc_network_comp_graph.png");
+
     }
 
     

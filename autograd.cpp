@@ -3,14 +3,9 @@
  */
 #include <iostream>
 #include "autograd.h"
+#include "network.h"
 #include "operation.h"
-
-#define DEBUG false
-
-
-// allows us to define debug code that has no effect on runtime when DEBUG is false
-#define DBG(x) do { if (DEBUG) { x; } } while (0)
-
+#include "constants.h"
 
 std::ostream &operator<<(std::ostream &os, const Operation &op){
    os << op.get_name();
@@ -47,7 +42,8 @@ std::shared_ptr<Value> make_value(float x, const std::optional<std::string>& lab
 
 
 
-std::vector<std::shared_ptr<Value>> topo_sort(const std::shared_ptr<Value>& out){
+network_output_t topo_sort(const std::shared_ptr<Value> out){
+
     // top-sort with cycle detection, where the first node has no ancestors while the last node has the most ancestors
     std::unordered_map<std::shared_ptr<Value>, int> in_degree;
 
@@ -68,7 +64,7 @@ std::vector<std::shared_ptr<Value>> topo_sort(const std::shared_ptr<Value>& out)
 
     dfs_count(out);
 
-    std::vector<std::shared_ptr<Value>> sorted;
+    network_output_t sorted;
     sorted.reserve(in_degree.size());
     size_t cur_index = 0;
 

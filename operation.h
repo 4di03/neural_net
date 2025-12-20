@@ -18,7 +18,7 @@ class Operation : public std::enable_shared_from_this<Operation>{
 
         // backward accumulates grads into inputs from the direct output of those inputs. This is the gradient of some final output w.r.t the output of this operation, not necessarily the immediate output
         // TODO: refactor to validate that out.operation == this
-        virtual void backward(std::span<std::shared_ptr<Value> const> inputs, std::shared_ptr<const Value> out) const = 0;
+        virtual void backward(std::span<const std::shared_ptr<Value> > inputs, std::shared_ptr<const Value> out) const = 0;
 
         virtual std::string get_name() const = 0;
 
